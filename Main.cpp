@@ -12,7 +12,6 @@
 
 // vari?veis globais
 GLfloat eixo = 120;
-GLfloat angulo = 30;
 
 Planeta mercurio;
 Planeta venus;
@@ -30,7 +29,7 @@ static void criarPlanetas() {
 	mercurio.angulo = 30;
 	mercurio.raioOrbita = 15;
 	mercurio.velocidadeRotacao = 0;
-	mercurio.velocidadeTranslacao = 0.3;
+	mercurio.velocidadeTranslacao = 0.2;
 
 	#pragma endregion
 
@@ -40,7 +39,7 @@ static void criarPlanetas() {
 	venus.angulo = 60;
 	venus.raioOrbita = 25;
 	venus.velocidadeRotacao = 0;
-	venus.velocidadeTranslacao = 0.07;
+	venus.velocidadeTranslacao = 0.09;
 
 	#pragma endregion
 
@@ -50,7 +49,15 @@ static void criarPlanetas() {
 	terra.angulo = 95;
 	terra.raioOrbita = 40;
 	terra.velocidadeRotacao = 0;
-	terra.velocidadeTranslacao = 0.04;
+	terra.velocidadeTranslacao = 0.06;
+
+	/*Lua luaTerra;
+	luaTerra.raio = 1;
+	luaTerra.raioOrbita = terra.raio + 2;
+	luaTerra.angulo = 0;
+	luaTerra.velocidadeTranslacao = 0.3;*/
+
+	terra.lua = criarLua(1, terra.raio + 2, 0, 0.3);
 
 	#pragma endregion
 
@@ -60,7 +67,9 @@ static void criarPlanetas() {
 	marte.angulo = 120;
 	marte.raioOrbita = 55;
 	marte.velocidadeRotacao = 0;
-	marte.velocidadeTranslacao = 0.02;
+	marte.velocidadeTranslacao = 0.03;
+
+	marte.lua = criarLua(1, marte.raio + 2, 30, 0.3);
 
 	#pragma endregion
 
@@ -70,7 +79,9 @@ static void criarPlanetas() {
 	jupter.angulo = 210;
 	jupter.raioOrbita = 70;
 	jupter.velocidadeRotacao = 0;
-	jupter.velocidadeTranslacao = 0.003;
+	jupter.velocidadeTranslacao = 0.005;
+
+	jupter.lua = criarLua(1, jupter.raio + 2, 60, 0.1);
 
 	#pragma endregion
 
@@ -80,7 +91,15 @@ static void criarPlanetas() {
 	saturno.angulo = 125;
 	saturno.raioOrbita = 85;
 	saturno.velocidadeRotacao = 0;
-	saturno.velocidadeTranslacao = 0.001;
+	saturno.velocidadeTranslacao = 0.002;
+
+	Lua luaSatruno;
+	luaSatruno.raio = 1;
+	luaSatruno.raioOrbita = saturno.raio + 2;
+	luaSatruno.angulo = 30;
+	luaSatruno.velocidadeTranslacao = 0.3;
+
+	saturno.lua = criarLua(1, saturno.raio + 2, 0, 0.2);;
 
 	#pragma endregion
 
@@ -88,9 +107,11 @@ static void criarPlanetas() {
 
 	urano.raio = 3.5;
 	urano.angulo = 280;
-	urano.raioOrbita = 95;
+	urano.raioOrbita = 100;
 	urano.velocidadeRotacao = 0;
-	urano.velocidadeTranslacao = 0.0009;
+	urano.velocidadeTranslacao = 0.001;
+
+	urano.lua = criarLua(1, urano.raio + 2, 270, -0.2);
 
 	#pragma endregion
 
@@ -100,7 +121,9 @@ static void criarPlanetas() {
 	netuno.angulo = 320;
 	netuno.raioOrbita = 110;
 	netuno.velocidadeRotacao = 0;
-	netuno.velocidadeTranslacao = 0.0005;
+	netuno.velocidadeTranslacao = 0.0009;
+
+	netuno.lua = criarLua(1, netuno.raio + 2, -90, 0.2);
 
 	#pragma endregion
 }
@@ -118,7 +141,7 @@ static void desenharPlaneta(float raio)
 	glEnd();
 }
 
-static void desenharOrbita(int vertices, int raio)
+static void desenharOrbita(int vertices, double raio)
 {
 	float angulo, incremento;
 
@@ -159,7 +182,7 @@ static void display() {
 	// DESENHA A ÓRBITA DE MERCÚRIO
 	glPushMatrix();
 		//glRotatef(0.0f, 0.0f, 0.0f, 1.0f);
-		glColor3f(0.6f, 0.6f, 0.6f);
+		glColor3f(1.0f, 1.0f, 1.0f);
 		desenharOrbita(50, mercurio.raioOrbita);
 	glPopMatrix();
 
@@ -176,7 +199,7 @@ static void display() {
 
 	// ÓRBITA DE VÊNUS
 	glPushMatrix();
-		glColor3f(0.9f, 0.6f, 0.1f);
+		glColor3f(1.0f, 1.0f, 1.0f);
 		desenharOrbita(100, venus.raioOrbita);
 	glPopMatrix();
 
@@ -193,7 +216,7 @@ static void display() {
 
 	// ÓRBITA DA TERRA
 	glPushMatrix();
-		glColor3f(0.2f, 0.0f, 1.0f);
+		glColor3f(1.0f, 1.0f, 1.0f);
 		desenharOrbita(100, terra.raioOrbita);
 	glPopMatrix();
 
@@ -204,13 +227,22 @@ static void display() {
 		desenharPlaneta(terra.raio);
 	glPopMatrix();
 
+	// LUA
+	glPushMatrix();
+		//double x = getPosicaoX(terra) + ((terra.raio + 2) * cos(angulo));
+		//double y = getPosicaoY(terra) + ((terra.raio + 2) * sin(angulo));
+		glTranslatef(getPosicaoXLua(terra), getPosicaoYLua(terra), 0.0f);
+		glColor3f(1.0f, 0.9f, 0.2f);
+		desenharPlaneta(terra.lua.raio);
+	glPopMatrix();
+
 	#pragma endregion
 
 	#pragma region MARTE
 
 	// ÓRBITA DE MARTE
 	glPushMatrix();
-		glColor3f(0.8f, 0.0f, 0.0f);
+		glColor3f(1.0f, 1.0f, 1.0f);
 		desenharOrbita(100, marte.raioOrbita);
 	glPopMatrix();
 
@@ -221,13 +253,20 @@ static void display() {
 		desenharPlaneta(marte.raio);
 	glPopMatrix();
 
+	// LUA
+	glPushMatrix();
+		glTranslatef(getPosicaoXLua(marte), getPosicaoYLua(marte), 0.0f);
+		glColor3f(1.0f, 0.9f, 0.2f);
+		desenharPlaneta(marte.lua.raio);
+	glPopMatrix();
+
 	#pragma endregion
 
 	#pragma region JÚPTER
 
 	// ÓRBITA DE JÚPTER
 	glPushMatrix();
-		glColor3f(0.7f, 0.5f, 0.0f);
+		glColor3f(1.0f, 1.0f, 1.0f);
 		desenharOrbita(100, jupter.raioOrbita);
 	glPopMatrix();
 
@@ -238,14 +277,28 @@ static void display() {
 		desenharPlaneta(jupter.raio);
 	glPopMatrix();
 
+	// ANEL DO PLANETA
+	glPushMatrix();
+		glTranslatef(getPosicaoX(jupter), getPosicaoY(jupter), 0.0f);
+		glColor3f(1.0f, 1.0f, 1.0f);
+		desenharOrbita(50, jupter.lua.raioOrbita);
+	glPopMatrix();
+
+	// LUA
+	glPushMatrix();
+		glTranslatef(getPosicaoXLua(jupter), getPosicaoYLua(jupter), 0.0f);
+		glColor3f(1.0f, 0.9f, 0.2f);
+		desenharPlaneta(jupter.lua.raio);
+	glPopMatrix();
+
 	#pragma endregion
 
 	#pragma region SATURNO
 
 	// ÓRBITA DE SATURNO
 	glPushMatrix();
-		glColor3f(0.9f, 0.4f, 0.1f);
-		desenharOrbita(100, saturno.raioOrbita);
+		glColor3f(1.0f, 1.0f, 1.0f);
+		desenharOrbita(200, saturno.raioOrbita);
 	glPopMatrix();
 
 	// SATURNO
@@ -255,14 +308,32 @@ static void display() {
 		desenharPlaneta(saturno.raio);
 	glPopMatrix();
 
+	// ANÉIS DO PLANETA
+	glPushMatrix();
+		glTranslatef(getPosicaoX(saturno), getPosicaoY(saturno), 0.0f);
+		glColor3f(1.0f, 1.0f, 1.0f);
+		desenharOrbita(50, saturno.lua.raioOrbita);
+		desenharOrbita(50, saturno.lua.raioOrbita + 1);
+		desenharOrbita(50, saturno.lua.raioOrbita + 1.5);
+		desenharOrbita(50, saturno.lua.raioOrbita + 1.6);
+		desenharOrbita(50, saturno.lua.raioOrbita + 1.7);
+	glPopMatrix();
+
+	// LUA
+	glPushMatrix();
+		glTranslatef(getPosicaoXLua(saturno), getPosicaoYLua(saturno), 0.0f);
+		glColor3f(1.0f, 0.9f, 0.2f);
+		desenharPlaneta(saturno.lua.raio);
+	glPopMatrix();
+
 	#pragma endregion
 
 	#pragma region URANO
 
 	// ÓRBITA DE URANO
 	glPushMatrix();
-		glColor3f(0.1f, 0.8f, 0.7f);
-		desenharOrbita(100, urano.raioOrbita);
+		glColor3f(1.0f, 1.0f, 1.0f);
+		desenharOrbita(200, urano.raioOrbita);
 	glPopMatrix();
 
 	// URANO
@@ -272,14 +343,28 @@ static void display() {
 		desenharPlaneta(urano.raio);
 	glPopMatrix();
 
+	// ANEL DO PLANETA
+	glPushMatrix();
+		glTranslatef(getPosicaoX(urano), getPosicaoY(urano), 0.0f);
+		glColor3f(1.0f, 1.0f, 1.0f);
+		desenharOrbita(50, urano.lua.raioOrbita);
+	glPopMatrix();
+
+	// LUA
+	glPushMatrix();
+		glTranslatef(getPosicaoXLua(urano), getPosicaoYLua(urano), 0.0f);
+		glColor3f(1.0f, 0.9f, 0.2f);
+		desenharPlaneta(urano.lua.raio);
+	glPopMatrix();
+
 	#pragma endregion
 
 	#pragma region NETUNO
 
 	// ÓRBITA DE NETUNO
 	glPushMatrix();
-		glColor3f(0.1f, 0.6f, 1.0f);
-		desenharOrbita(100, netuno.raioOrbita);
+		glColor3f(1.0f, 1.0f, 1.0f);
+		desenharOrbita(200, netuno.raioOrbita);
 	glPopMatrix();
 
 	// NETUNO
@@ -289,6 +374,20 @@ static void display() {
 		desenharPlaneta(netuno.raio);
 	glPopMatrix();
 
+	// ANEL DO PLANETA
+	glPushMatrix();
+		glTranslatef(getPosicaoX(netuno), getPosicaoY(netuno), 0.0f);
+		glColor3f(1.0f, 1.0f, 1.0f);
+		desenharOrbita(50, netuno.lua.raioOrbita);
+	glPopMatrix();
+
+	// LUA
+	glPushMatrix();
+		glTranslatef(getPosicaoXLua(netuno), getPosicaoYLua(netuno), 0.0f);
+		glColor3f(1.0f, 0.9f, 0.2f);
+		desenharPlaneta(netuno.lua.raio);
+	glPopMatrix();
+
 	#pragma endregion
 
 	glutSwapBuffers();
@@ -296,8 +395,6 @@ static void display() {
 
 void animar(int value)
 {
-	angulo += 0.3;
-
 	iniciarTranslacao(mercurio);
 	iniciarTranslacao(venus);
 	iniciarTranslacao(terra);

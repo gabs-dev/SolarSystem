@@ -2,12 +2,22 @@
 #ifndef PLANETA_H
 #define PLANETA_H
 
-struct Planeta {
+typedef struct Lua
+{
+    double raio;
+    double raioOrbita;
+    double angulo;
+    double velocidadeTranslacao;
+};
+
+struct Planeta 
+{
     double raio; // Raio do planeta
     double raioOrbita; // Raio da órbita
     double angulo; // Ângulo da órbita (em graus)
     double velocidadeTranslacao; // Velocidade de translação
     double velocidadeRotacao; // Velocidade de rotação
+    Lua lua;
 };
 
 // Função para inicar a animação do processo de tranlação do pleneta.
@@ -19,5 +29,13 @@ double getPosicaoX(Planeta& planeta);
 
 // Retorna a posição Y do planeta no sitema de coordenadas.
 double getPosicaoY(Planeta& planeta);
+
+void iniciarTranslacaoLua(Lua& lua);
+
+double getPosicaoXLua(Planeta& planeta);
+
+double getPosicaoYLua(Planeta& planeta);
+
+Lua criarLua(double raio, double raioOrbita, double angulo, double velocidadeTranslacao);
 
 #endif // !PLANETA_H
