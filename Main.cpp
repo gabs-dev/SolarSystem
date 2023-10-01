@@ -451,10 +451,10 @@ static void key(unsigned char key, int x, int y) {
 	switch (key)
 	{
 		case '+': // Aumenta a velocidade de translação dos planetas
-			tempo++;
+			tempo = tempo == 0 ? 0 : (tempo - 1);
 			break;
 		case '-': // Diminui a velocidade de translação dos planetas
-			tempo = tempo == 0 ? 0 : (tempo - 1);
+			tempo++;
 			break;
 		case 'p':
 		case 'P': // Play/pause na animação
