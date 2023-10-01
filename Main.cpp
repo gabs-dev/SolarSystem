@@ -10,8 +10,13 @@
 
 #include "Planeta.h";
 
+#include <iostream>
+
 // vari?veis globais
-GLfloat eixo = 120;
+GLfloat eixo = 125;
+int tempo = 150;
+bool pausado = false;
+bool exibirOrbita = true;
 
 Planeta mercurio;
 Planeta venus;
@@ -21,6 +26,15 @@ Planeta jupter;
 Planeta saturno;
 Planeta urano;
 Planeta netuno;
+
+// OPÇÕES DE INTERAÇÃO:
+// 1 - PAUSAR/CONTINUAR
+// 2 - EXIBIR/OCULTAR PLANETAS, ÓRBITAS
+// 3 - AUMENTAR E DIMINUIR A VELOCIDADE DE TRANSLAÇÃO
+
+// NA HORA DE ENVIAR
+// ADICIONAR NAS OBSERVAÇÕES QUE USEI O VISUAL STUDIO E A VERSÃO QUE EU USEI
+// NO CASO A VERSÃO É A 2022
 
 static void criarPlanetas() {
 	#pragma region Mercúrio
@@ -119,7 +133,7 @@ static void criarPlanetas() {
 
 	netuno.raio = 3.5;
 	netuno.angulo = 320;
-	netuno.raioOrbita = 110;
+	netuno.raioOrbita = 115;
 	netuno.velocidadeRotacao = 0;
 	netuno.velocidadeTranslacao = 0.0009;
 
@@ -154,6 +168,23 @@ static void desenharOrbita(int vertices, double raio)
 	glEnd();
 }
 
+static void orbita(Planeta planeta) {
+	if (exibirOrbita) {
+		glPushMatrix();
+			glColor3f(1.0f, 1.0f, 1.0f);
+			desenharOrbita(100, planeta.raioOrbita);
+		glPopMatrix();
+	}
+}
+
+static void planeta(Planeta planeta, GLfloat color[]) {
+	glPushMatrix();
+		glTranslatef(getPosicaoX(planeta), getPosicaoY(planeta), 0.0f);
+		glColor3f(color[0], color[1], color[2]);
+		desenharPlaneta(planeta.raio);
+	glPopMatrix();
+}
+
 // função de redimensionamento da janela de visualiza??o
 static void resize(int width, int height) {
 }
@@ -180,213 +211,179 @@ static void display() {
 	#pragma region MERCÚRIO
 
 	// DESENHA A ÓRBITA DE MERCÚRIO
-	glPushMatrix();
-		//glRotatef(0.0f, 0.0f, 0.0f, 1.0f);
-		glColor3f(1.0f, 1.0f, 1.0f);
-		desenharOrbita(50, mercurio.raioOrbita);
-	glPopMatrix();
+
+	orbita(mercurio);
 
 	// DESENHA MERCÚRIO
-	glPushMatrix();
-		glTranslatef(getPosicaoX(mercurio), getPosicaoY(mercurio), 0.0f);
-		glColor3f(0.6f, 0.6f, 0.6f);
-		desenharPlaneta(mercurio.raio);
-	glPopMatrix();
+	if (mercurio.exibir) {
+		GLfloat corMercurio[] = { 0.6f, 0.6f, 0.6f };
+		planeta(mercurio, corMercurio);
+	}
 
 	#pragma endregion
 
 	#pragma region VÊNUS
 
 	// ÓRBITA DE VÊNUS
-	glPushMatrix();
-		glColor3f(1.0f, 1.0f, 1.0f);
-		desenharOrbita(100, venus.raioOrbita);
-	glPopMatrix();
+	orbita(venus);
 
 	// VÊNUS
-	glPushMatrix();
-		glTranslatef(getPosicaoX(venus), getPosicaoY(venus), 0.0f);
-		glColor3f(0.9f, 0.6f, 0.1f);
-		desenharPlaneta(venus.raio);
-	glPopMatrix();
+	if (venus.exibir) {
+		GLfloat corVenus[] = { 0.9f, 0.6f, 0.1f };
+		planeta(venus, corVenus);
+	}
 
 	#pragma endregion
 
 	#pragma region TERRA
 
 	// ÓRBITA DA TERRA
-	glPushMatrix();
-		glColor3f(1.0f, 1.0f, 1.0f);
-		desenharOrbita(100, terra.raioOrbita);
-	glPopMatrix();
+	orbita(terra);
 
-	// TERRA
-	glPushMatrix();
-		glTranslatef(getPosicaoX(terra), getPosicaoY(terra), 0.0f);
-		glColor3f(0.2f, 0.0f, 1.0f);
-		desenharPlaneta(terra.raio);
-	glPopMatrix();
+	if (terra.exibir) {
+		// TERRA
+		GLfloat corTerra[] = { 0.2f, 0.0f, 1.0f };
+		planeta(terra, corTerra);
 
-	// LUA
-	glPushMatrix();
-		//double x = getPosicaoX(terra) + ((terra.raio + 2) * cos(angulo));
-		//double y = getPosicaoY(terra) + ((terra.raio + 2) * sin(angulo));
-		glTranslatef(getPosicaoXLua(terra), getPosicaoYLua(terra), 0.0f);
-		glColor3f(1.0f, 0.9f, 0.2f);
-		desenharPlaneta(terra.lua.raio);
-	glPopMatrix();
+		// LUA
+		glPushMatrix();
+			glTranslatef(getPosicaoXLua(terra), getPosicaoYLua(terra), 0.0f);
+			glColor3f(1.0f, 0.9f, 0.2f);
+			desenharPlaneta(terra.lua.raio);
+		glPopMatrix();
+	}
 
 	#pragma endregion
 
 	#pragma region MARTE
 
 	// ÓRBITA DE MARTE
-	glPushMatrix();
-		glColor3f(1.0f, 1.0f, 1.0f);
-		desenharOrbita(100, marte.raioOrbita);
-	glPopMatrix();
+	orbita(marte);
 
-	// MARTE
-	glPushMatrix();
-		glTranslatef(getPosicaoX(marte), getPosicaoY(marte), 0.0f);
-		glColor3f(0.8f, 0.0f, 0.0f);
-		desenharPlaneta(marte.raio);
-	glPopMatrix();
+	if (marte.exibir) {
+		// MARTE
+		GLfloat corMarte[] = { 0.8f, 0.0f, 0.0f };
+		planeta(marte, corMarte);
 
-	// LUA
-	glPushMatrix();
-		glTranslatef(getPosicaoXLua(marte), getPosicaoYLua(marte), 0.0f);
-		glColor3f(1.0f, 0.9f, 0.2f);
-		desenharPlaneta(marte.lua.raio);
-	glPopMatrix();
+		// LUA
+		glPushMatrix();
+			glTranslatef(getPosicaoXLua(marte), getPosicaoYLua(marte), 0.0f);
+			glColor3f(1.0f, 0.9f, 0.2f);
+			desenharPlaneta(marte.lua.raio);
+		glPopMatrix();
+	}
 
 	#pragma endregion
 
 	#pragma region JÚPTER
 
 	// ÓRBITA DE JÚPTER
-	glPushMatrix();
-		glColor3f(1.0f, 1.0f, 1.0f);
-		desenharOrbita(100, jupter.raioOrbita);
-	glPopMatrix();
+	orbita(jupter);
 
-	// JÚPTER
-	glPushMatrix();
-		glTranslatef(getPosicaoX(jupter), getPosicaoY(jupter), 0.0f);
-		glColor3f(0.7f, 0.5f, 0.0f);
-		desenharPlaneta(jupter.raio);
-	glPopMatrix();
+	if (jupter.exibir) {
+		// JÚPTER
+		GLfloat corJupter[] = { 0.7f, 0.5f, 0.0f };
+		planeta(jupter, corJupter);
 
-	// ANEL DO PLANETA
-	glPushMatrix();
-		glTranslatef(getPosicaoX(jupter), getPosicaoY(jupter), 0.0f);
-		glColor3f(1.0f, 1.0f, 1.0f);
-		desenharOrbita(50, jupter.lua.raioOrbita);
-	glPopMatrix();
+		// ANEL DO PLANETA
+		glPushMatrix();
+			glTranslatef(getPosicaoX(jupter), getPosicaoY(jupter), 0.0f);
+			glColor3f(1.0f, 1.0f, 1.0f);
+			desenharOrbita(50, jupter.lua.raioOrbita);
+		glPopMatrix();
 
-	// LUA
-	glPushMatrix();
-		glTranslatef(getPosicaoXLua(jupter), getPosicaoYLua(jupter), 0.0f);
-		glColor3f(1.0f, 0.9f, 0.2f);
-		desenharPlaneta(jupter.lua.raio);
-	glPopMatrix();
+		// LUA
+		glPushMatrix();
+			glTranslatef(getPosicaoXLua(jupter), getPosicaoYLua(jupter), 0.0f);
+			glColor3f(1.0f, 0.9f, 0.2f);
+			desenharPlaneta(jupter.lua.raio);
+		glPopMatrix();
+	}
 
 	#pragma endregion
 
 	#pragma region SATURNO
 
 	// ÓRBITA DE SATURNO
-	glPushMatrix();
-		glColor3f(1.0f, 1.0f, 1.0f);
-		desenharOrbita(200, saturno.raioOrbita);
-	glPopMatrix();
+	orbita(saturno);
 
-	// SATURNO
-	glPushMatrix();
-		glTranslatef(getPosicaoX(saturno), getPosicaoY(saturno), 0.0f);
-		glColor3f(0.9f, 0.4f, 0.1f);
-		desenharPlaneta(saturno.raio);
-	glPopMatrix();
+	if (saturno.exibir) {
+		// SATURNO
+		GLfloat corSaturno[] = { 0.9f, 0.4f, 0.1f };
+		planeta(saturno, corSaturno);
 
-	// ANÉIS DO PLANETA
-	glPushMatrix();
-		glTranslatef(getPosicaoX(saturno), getPosicaoY(saturno), 0.0f);
-		glColor3f(1.0f, 1.0f, 1.0f);
-		desenharOrbita(50, saturno.lua.raioOrbita);
-		desenharOrbita(50, saturno.lua.raioOrbita + 1);
-		desenharOrbita(50, saturno.lua.raioOrbita + 1.5);
-		desenharOrbita(50, saturno.lua.raioOrbita + 1.6);
-		desenharOrbita(50, saturno.lua.raioOrbita + 1.7);
-	glPopMatrix();
+		// ANÉIS DO PLANETA
+		glPushMatrix();
+			glTranslatef(getPosicaoX(saturno), getPosicaoY(saturno), 0.0f);
+			glColor3f(1.0f, 1.0f, 1.0f);
+			desenharOrbita(50, saturno.lua.raioOrbita);
+			desenharOrbita(50, saturno.lua.raioOrbita + 1);
+			desenharOrbita(50, saturno.lua.raioOrbita + 1.5);
+			desenharOrbita(50, saturno.lua.raioOrbita + 1.6);
+			desenharOrbita(50, saturno.lua.raioOrbita + 1.7);
+		glPopMatrix();
 
-	// LUA
-	glPushMatrix();
-		glTranslatef(getPosicaoXLua(saturno), getPosicaoYLua(saturno), 0.0f);
-		glColor3f(1.0f, 0.9f, 0.2f);
-		desenharPlaneta(saturno.lua.raio);
-	glPopMatrix();
+		// LUA
+		glPushMatrix();
+			glTranslatef(getPosicaoXLua(saturno), getPosicaoYLua(saturno), 0.0f);
+			glColor3f(1.0f, 0.9f, 0.2f);
+			desenharPlaneta(saturno.lua.raio);
+		glPopMatrix();
+	}
 
 	#pragma endregion
 
 	#pragma region URANO
 
 	// ÓRBITA DE URANO
-	glPushMatrix();
-		glColor3f(1.0f, 1.0f, 1.0f);
-		desenharOrbita(200, urano.raioOrbita);
-	glPopMatrix();
+	orbita(urano);
 
-	// URANO
-	glPushMatrix();
-		glTranslatef(getPosicaoX(urano), getPosicaoY(urano), 0.0f);
-		glColor3f(0.1f, 0.8f, 0.7f);
-		desenharPlaneta(urano.raio);
-	glPopMatrix();
+	if (urano.exibir) {
+		// URANO
+		GLfloat corUrano[] = { 0.1f, 0.8f, 0.7f };
+		planeta(urano, corUrano);
 
-	// ANEL DO PLANETA
-	glPushMatrix();
-		glTranslatef(getPosicaoX(urano), getPosicaoY(urano), 0.0f);
-		glColor3f(1.0f, 1.0f, 1.0f);
-		desenharOrbita(50, urano.lua.raioOrbita);
-	glPopMatrix();
+		// ANEL DO PLANETA
+		glPushMatrix();
+			glTranslatef(getPosicaoX(urano), getPosicaoY(urano), 0.0f);
+			glColor3f(1.0f, 1.0f, 1.0f);
+			desenharOrbita(50, urano.lua.raioOrbita);
+		glPopMatrix();
 
-	// LUA
-	glPushMatrix();
-		glTranslatef(getPosicaoXLua(urano), getPosicaoYLua(urano), 0.0f);
-		glColor3f(1.0f, 0.9f, 0.2f);
-		desenharPlaneta(urano.lua.raio);
-	glPopMatrix();
+		// LUA
+		glPushMatrix();
+			glTranslatef(getPosicaoXLua(urano), getPosicaoYLua(urano), 0.0f);
+			glColor3f(1.0f, 0.9f, 0.2f);
+			desenharPlaneta(urano.lua.raio);
+		glPopMatrix();
+	}
 
 	#pragma endregion
 
 	#pragma region NETUNO
 
 	// ÓRBITA DE NETUNO
-	glPushMatrix();
-		glColor3f(1.0f, 1.0f, 1.0f);
-		desenharOrbita(200, netuno.raioOrbita);
-	glPopMatrix();
+	orbita(netuno);
 
-	// NETUNO
-	glPushMatrix();
-		glTranslatef(getPosicaoX(netuno), getPosicaoY(netuno), 0.0f);
-		glColor3f(0.1f, 0.6f, 1.0f);
-		desenharPlaneta(netuno.raio);
-	glPopMatrix();
+	if (netuno.exibir) {
+		// NETUNO
+		GLfloat corNeturno[] = { 0.1f, 0.6f, 1.0f };
+		planeta(netuno, corNeturno);
 
-	// ANEL DO PLANETA
-	glPushMatrix();
-		glTranslatef(getPosicaoX(netuno), getPosicaoY(netuno), 0.0f);
-		glColor3f(1.0f, 1.0f, 1.0f);
-		desenharOrbita(50, netuno.lua.raioOrbita);
-	glPopMatrix();
+		// ANEL DO PLANETA
+		glPushMatrix();
+			glTranslatef(getPosicaoX(netuno), getPosicaoY(netuno), 0.0f);
+			glColor3f(1.0f, 1.0f, 1.0f);
+			desenharOrbita(50, netuno.lua.raioOrbita);
+		glPopMatrix();
 
-	// LUA
-	glPushMatrix();
-		glTranslatef(getPosicaoXLua(netuno), getPosicaoYLua(netuno), 0.0f);
-		glColor3f(1.0f, 0.9f, 0.2f);
-		desenharPlaneta(netuno.lua.raio);
-	glPopMatrix();
+		// LUA
+		glPushMatrix();
+			glTranslatef(getPosicaoXLua(netuno), getPosicaoYLua(netuno), 0.0f);
+			glColor3f(1.0f, 0.9f, 0.2f);
+			desenharPlaneta(netuno.lua.raio);
+		glPopMatrix();
+	}
 
 	#pragma endregion
 
@@ -395,23 +392,93 @@ static void display() {
 
 void animar(int value)
 {
-	iniciarTranslacao(mercurio);
-	iniciarTranslacao(venus);
-	iniciarTranslacao(terra);
-	iniciarTranslacao(marte);
-	iniciarTranslacao(jupter);
-	iniciarTranslacao(saturno);
-	iniciarTranslacao(urano);
-	iniciarTranslacao(netuno);
+	if (!pausado) {
+		iniciarTranslacao(mercurio);
+		iniciarTranslacao(venus);
+		iniciarTranslacao(terra);
+		iniciarTranslacao(marte);
+		iniciarTranslacao(jupter);
+		iniciarTranslacao(saturno);
+		iniciarTranslacao(urano);
+		iniciarTranslacao(netuno);
 
-	glutPostRedisplay();
-	glutTimerFunc(150, animar, 1);
+		glutPostRedisplay();
+		glutTimerFunc(tempo, animar, 1);
+	}
+}
+
+static void pausar() {
+
+	pausado = !pausado;
+
+	if (!pausado)
+		animar(0);
+
+}
+
+static void exibirPlaneta(unsigned char key) {
+	int index = key - '0';
+
+	index = index - 1;
+
+	if (index >= 0 && index <= 7) {
+		switch (index)
+		{
+			case 0:
+				mercurio.exibir = !mercurio.exibir;
+				break;
+			case 1:
+				venus.exibir = !venus.exibir;
+				break;
+			case 2:
+				terra.exibir = !terra.exibir;
+				break;
+			case 3:
+				marte.exibir = !marte.exibir;
+				break;
+			case 4:
+				jupter.exibir = !jupter.exibir;
+				break;
+			case 5:
+				saturno.exibir = !saturno.exibir;
+				break;
+			case 6:
+				urano.exibir = !urano.exibir;
+				break;
+			case 7:
+				netuno.exibir = !netuno.exibir;
+				break;
+		}
+	}
 }
 
 // fun??o para tratar os eventos do teclado
 static void key(unsigned char key, int x, int y) {
 	if (key == 27)
 		exit(0);
+
+	switch (key)
+	{
+		case '+': // Aumenta a velocidade de translação dos planetas
+			tempo++;
+			break;
+		case '-': // Diminui a velocidade de translação dos planetas
+			tempo = tempo == 0 ? 0 : (tempo - 1);
+			break;
+		case 'p':
+		case 'P': // Play/pause na animação
+			pausar();
+			break;
+		case 'o':
+		case 'O': // Exibir/ocultar órbitas dos planetas
+			exibirOrbita = !exibirOrbita;
+			break;
+		default:
+			exibirPlaneta(key); // Teclas de 1 a 8 exibem/ocultam os seus respectivos planetas.
+			break;
+	}
+
+	display();
 }
 
 // fun??o respons?vel por fazer as inicializa??es
@@ -460,7 +527,7 @@ int main(int argc, char* argv[]) {
 
 	// Registra a fun??o callback que ser? chamada a cada intervalo de tempo
 	//https://www.opengl.org/resources/libraries/glut/spec3/node64.html
-	glutTimerFunc(150, animar, 1);
+	glutTimerFunc(tempo, animar, 1);
 
 	// chama a fun??o respons?vel por fazer as inicializa??es
 	setup();

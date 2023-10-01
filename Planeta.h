@@ -17,6 +17,7 @@ struct Planeta
     double angulo; // Ângulo da órbita (em graus)
     double velocidadeTranslacao; // Velocidade de translação
     double velocidadeRotacao; // Velocidade de rotação
+    bool exibir = true; // Atributo para indicar se o planeta deverá ou não ser exibido na tela
     Lua lua;
 };
 
