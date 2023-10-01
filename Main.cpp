@@ -27,15 +27,6 @@ Planeta saturno;
 Planeta urano;
 Planeta netuno;
 
-// OPÇÕES DE INTERAÇÃO:
-// 1 - PAUSAR/CONTINUAR
-// 2 - EXIBIR/OCULTAR PLANETAS, ÓRBITAS
-// 3 - AUMENTAR E DIMINUIR A VELOCIDADE DE TRANSLAÇÃO
-
-// NA HORA DE ENVIAR
-// ADICIONAR NAS OBSERVAÇÕES QUE USEI O VISUAL STUDIO E A VERSÃO QUE EU USEI
-// NO CASO A VERSÃO É A 2022
-
 static void criarPlanetas() {
 	#pragma region Mercúrio
 
